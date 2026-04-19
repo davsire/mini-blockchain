@@ -2,11 +2,10 @@
 
 ## Disciplina
 
-Segurança da informação e de redes
-2026/1
+Segurança da informação e de redes (2026/1)
 
 ## Alunos
 
-Davi Vitorino da Silva
-Iago Rodrigues Munoz
-Matheus Steinbach dos Santos
+- Davi Vitorino da Silva
+- Iago Rodrigues Munoz
+- Matheus Steinbach dos Santos
