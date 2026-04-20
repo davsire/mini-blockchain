@@ -37,7 +37,6 @@ class BlocoServico:
             bloco_lista = {
                 'ID': bloco.id_bloco,
                 'Usuário': bloco.usuario,
-                'IV': bloco.iv,
                 'Hash anterior': bloco.hash_prev,
                 'Hash anterior válido': '✓ VÁLIDO' if hash_bloco_anterior == bloco.hash_prev else '✗ INVÁLIDO',
                 'Timestamp': time.strftime("%d-%m-%Y %H:%M:%S", time.localtime(bloco.timestamp)),
