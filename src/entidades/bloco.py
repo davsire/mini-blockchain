@@ -25,6 +25,10 @@ class Bloco:
     def conteudo(self) -> str:
         return self.__conteudo
 
+    @conteudo.setter
+    def conteudo(self, conteudo: str) -> None:
+        self.__conteudo = conteudo
+
     @property
     def iv(self) -> str:
         return self.__iv
@@ -36,6 +40,10 @@ class Bloco:
     @property
     def hash_prev(self) -> str:
         return self.__hash_prev
+
+    @hash_prev.setter
+    def hash_prev(self, hash_prev: str) -> None:
+        self.__hash_prev = hash_prev
 
     @property
     def usuario(self) -> str:

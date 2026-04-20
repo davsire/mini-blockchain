@@ -8,6 +8,7 @@ class MenuApp(MenuBase):
             {
                 1: 'Adicionar bloco',
                 2: 'Listar blocos',
-                3: 'Logout'
+                3: 'Simular adulteração de bloco',
+                4: 'Logout',
             }
         )

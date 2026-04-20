@@ -1,6 +1,5 @@
 import os
 import time
-from cryptography.exceptions import InvalidTag
 from criptografia.cript_decript import criptografar_dados, descriptografar_dados
 from criptografia.derivacao_chave import derivar_subchave
 from criptografia.hash import hash_dados
@@ -50,6 +49,18 @@ class BlocoServico:
             hash_bloco_anterior = hash_dados(bloco.serializar_bloco())
         return blocos_lista
 
+    def adulterar_bloco(self, id_bloco: str, campo: int, novo_valor: str):
+        bloco = self.bloco_dao.obter_bloco(id_bloco)
+        if bloco is None:
+            raise Exception('Bloco não encontrado.')
+        if campo == 1:
+            bloco.conteudo = novo_valor
+        elif campo == 2:
+            bloco.hash_prev = novo_valor
+        else:
+            raise Exception('Campo inválido.')
+        self.bloco_dao.salvar_bloco(bloco)
+
     def obter_ultimo_bloco(self) -> Bloco | None:
         blocos = self.bloco_dao.obter_blocos()
         return blocos[-1] if blocos else None
@@ -61,6 +72,6 @@ class BlocoServico:
             try:
                 conteudo_bytes = descriptografar_dados(bytes.fromhex(bloco.conteudo), usuario_sessao.chave_sessao, bloco.iv)
                 conteudo = conteudo_bytes.decode('utf-8')
-            except InvalidTag:
+            except:
                 adulterado = True
         return conteudo, adulterado

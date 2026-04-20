@@ -9,8 +9,8 @@ class FormCadastro(InterfaceBase):
         super().mostrar_tela()
 
         while True:
-            usuario = input('Digite seu usuário: ')
-            senha = input('Digite sua senha: ')
+            usuario = input('Informe seu usuário: ')
+            senha = input('Informe sua senha: ')
             confirmacao_senha = input('Confirme sua senha: ')
             if not usuario or not senha or not confirmacao_senha:
                 print('\nPreencha todos os campos!')

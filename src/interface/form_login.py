@@ -9,9 +9,9 @@ class FormLogin(InterfaceBase):
         super().mostrar_tela()
 
         while True:
-            usuario = input('Digite seu usuário: ')
-            senha = input('Digite sua senha: ')
-            totp = input('Digite o código TOTP: ')
+            usuario = input('Informe seu usuário: ')
+            senha = input('Informe sua senha: ')
+            totp = input('Informe o código TOTP: ')
             if usuario and senha and totp:
                 return usuario, senha, totp
             print('\nPreencha todos os campos!')

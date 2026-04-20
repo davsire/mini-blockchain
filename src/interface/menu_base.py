@@ -19,4 +19,4 @@ class MenuBase(InterfaceBase):
                     raise ValueError
                 return opcao
             except ValueError:
-                print('Digite uma opção válida!')
+                print('Informe uma opção válida!')

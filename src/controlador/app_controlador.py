@@ -1,8 +1,11 @@
 from controlador.controlador_base import ControladorBase
 from controlador.login_cadastro_controlador import LoginCadastroControlador
+from criptografia.totp import verificar_totp
 from entidades.usuario_sessao import UsuarioSessao
 from interface.aviso import Aviso
+from interface.form_adulteracao import FormAdulteracao
 from interface.form_bloco import FormBloco
+from interface.form_totp import FormTotp
 from interface.lista_blocos import ListaBlocos
 from interface.menu_app import MenuApp
 from persistencia.bloco_dao import BlocoDAO
@@ -16,8 +19,10 @@ class AppControlador(ControladorBase):
         self.bloco_servico = BlocoServico(self.bloco_dao)
         self.login_cadastro_controlador = LoginCadastroControlador()
         self.menu_app = MenuApp()
+        self.form_totp = FormTotp()
         self.form_bloco = FormBloco()
         self.lista_blocos = ListaBlocos()
+        self.form_adulteracao = FormAdulteracao()
         self.aviso = Aviso()
 
     def executar(self) -> None:
@@ -31,17 +36,29 @@ class AppControlador(ControladorBase):
                     elif opcao == 2:
                         self.executar_fluxo_lista_bloco()
                     elif opcao == 3:
+                        self.executar_fluxo_adulterar_bloco()
+                    elif opcao == 4:
                         self.logout()
                 except Exception as erro:
                     self.aviso.mostrar_tela(str(erro))
 
     def executar_fluxo_adicionar_bloco(self) -> None:
+        totp = self.form_totp.mostrar_tela()
+        valido = verificar_totp(self.usuario_sessao.chave_totp, totp)
+        if not valido:
+            self.aviso.mostrar_tela('TOTP inválido.')
+            return
         conteudo = self.form_bloco.mostrar_tela()
         self.bloco_servico.criar_bloco(conteudo, self.usuario_sessao)
+        self.aviso.mostrar_tela('Bloco adicionado com sucesso.')
 
     def executar_fluxo_lista_bloco(self) -> None:
         bloco_lista = self.bloco_servico.obter_blocos_lista(self.usuario_sessao)
         self.lista_blocos.mostrar_tela(bloco_lista)
+
+    def executar_fluxo_adulterar_bloco(self) -> None:
+        id_bloco, campo, novo_valor = self.form_adulteracao.mostrar_tela()
+        self.bloco_servico.adulterar_bloco(id_bloco, campo, novo_valor)
 
     def logout(self) -> None:
         self.usuario_sessao = None
