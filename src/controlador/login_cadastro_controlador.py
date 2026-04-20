@@ -12,7 +12,7 @@ from servicos.usuario_servico import UsuarioServico
 class LoginCadastroControlador(ControladorBase):
     def __init__(self):
         self.usuario_dao = UsuarioDAO()
-        self.usuario_service = UsuarioServico(self.usuario_dao)
+        self.usuario_servico = UsuarioServico(self.usuario_dao)
         self.menu_inicial = MenuInicial()
         self.form_login = FormLogin()
         self.form_cadastro = FormCadastro()
@@ -34,10 +34,10 @@ class LoginCadastroControlador(ControladorBase):
 
     def executar_fluxo_login(self) -> UsuarioSessao:
         usuario, senha, totp = self.form_login.mostrar_tela()
-        return self.usuario_service.validar_login(usuario, senha, totp)
+        return self.usuario_servico.validar_login(usuario, senha, totp)
 
     def executar_fluxo_cadastro(self) -> UsuarioSessao:
         usuario, senha = self.form_cadastro.mostrar_tela()
-        usuario_sessao = self.usuario_service.criar_usuario(usuario, senha)
+        usuario_sessao = self.usuario_servico.criar_usuario(usuario, senha)
         self.totp_qrcode.mostrar_tela(usuario_sessao.chave_totp, usuario)
         return usuario_sessao

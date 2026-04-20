@@ -13,6 +13,10 @@ class UsuarioSessao:
         return self.__usuario
 
     @property
+    def chave_mestra(self) -> str:
+        return self.__chave_mestra
+
+    @property
     def chave_totp(self) -> str:
         return self.__chave_totp
 

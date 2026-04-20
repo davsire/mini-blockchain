@@ -1,8 +1,8 @@
 from entidades.usuario import Usuario
-from persistencia.dao_base import DaoBase
+from persistencia.dao_base import DAOBase
 
 
-class UsuarioDAO(DaoBase):
+class UsuarioDAO(DAOBase):
     def __init__(self):
         super().__init__('usuarios.pkl')
 

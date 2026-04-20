@@ -13,9 +13,9 @@ class FormCadastro(InterfaceBase):
             senha = input('Digite sua senha: ')
             confirmacao_senha = input('Confirme sua senha: ')
             if not usuario or not senha or not confirmacao_senha:
-                print('Preencha todos os campos!')
+                print('\nPreencha todos os campos!')
                 continue
             if senha != confirmacao_senha:
-                print('A senha e a confirmação da senha devem ser iguais!')
+                print('\nA senha e a confirmação da senha devem ser iguais!')
                 continue
             return usuario, senha

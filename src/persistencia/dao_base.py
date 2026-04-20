@@ -3,7 +3,7 @@ import pickle
 from typing import Any
 
 
-class DaoBase(ABC):
+class DAOBase(ABC):
     @abstractmethod
     def __init__(self, nome_arquivo: str) -> None:
         self.nome_arquivo = nome_arquivo
