@@ -13,7 +13,7 @@ def verificar_totp(chave_totp: str, codigo: str) -> bool:
     totp = TOTP(bytes.fromhex(chave_totp), 6, SHA1(), 30)
     tempo_atual = time.time()
     try:
-        totp.verify(codigo.encode(), tempo_atual)
+        totp.verify(codigo.encode(), int(tempo_atual))
         return True
     except InvalidToken:
         return False

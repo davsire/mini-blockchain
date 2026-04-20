@@ -1,4 +1,6 @@
 import os
+import time
+from cryptography.exceptions import InvalidTag
 from criptografia.cript_decript import criptografar_dados, descriptografar_dados
 from criptografia.derivacao_chave import derivar_subchave
 from criptografia.hash import hash_dados
@@ -10,12 +12,13 @@ from persistencia.bloco_dao import BlocoDAO
 class BlocoServico:
     def __init__(self, bloco_dao: BlocoDAO):
         self.bloco_dao = bloco_dao
+        self.hash_vazio = '0' * 64
 
     def criar_bloco(self, conteudo: str, usuario_sessao: UsuarioSessao) -> None:
         id_bloco = os.urandom(8).hex()
         iv_bloco = derivar_subchave(usuario_sessao.chave_mestra, f'iv_bloco_{id_bloco}', 12)
         ultimo_bloco = self.obter_ultimo_bloco()
-        hash_ultimo_bloco = hash_dados(self.serializar_bloco(ultimo_bloco)) if ultimo_bloco else '0' * 64
+        hash_ultimo_bloco = hash_dados(ultimo_bloco.serializar_bloco()) if ultimo_bloco else self.hash_vazio
         dados_criptografados = criptografar_dados(conteudo.encode(), usuario_sessao.chave_sessao, iv_bloco)
         bloco = Bloco(
             id_bloco,
@@ -26,19 +29,38 @@ class BlocoServico:
         )
         self.bloco_dao.salvar_bloco(bloco)
 
-    def obter_blocos(self) -> list[Bloco]:
-        return self.bloco_dao.obter_blocos()
+    def obter_blocos_lista(self, usuario_sessao: UsuarioSessao) -> list[dict[str, str]]:
+        blocos = self.bloco_dao.obter_blocos()
+        blocos_lista: list[dict[str, str]] = []
+        hash_bloco_anterior = self.hash_vazio
+        for bloco in blocos:
+            conteudo, adulterado = self.obter_conteudo_bloco(bloco, usuario_sessao)
+            bloco_lista = {
+                'ID': bloco.id_bloco,
+                'Usuário': bloco.usuario,
+                'IV': bloco.iv,
+                'Hash anterior': bloco.hash_prev,
+                'Hash anterior válido': '✓ VÁLIDO' if hash_bloco_anterior == bloco.hash_prev else '✗ INVÁLIDO',
+                'Timestamp': time.strftime("%d-%m-%Y %H:%M:%S", time.localtime(bloco.timestamp)),
+                'Conteúdo': conteudo,
+            }
+            if bloco.usuario == usuario_sessao.usuario.usuario:
+                bloco_lista['Status bloco'] = '✗ ADULTERADO' if adulterado else '✓ VÁLIDO'
+            blocos_lista.append(bloco_lista)
+            hash_bloco_anterior = hash_dados(bloco.serializar_bloco())
+        return blocos_lista
 
     def obter_ultimo_bloco(self) -> Bloco | None:
         blocos = self.bloco_dao.obter_blocos()
         return blocos[-1] if blocos else None
 
-    def serializar_bloco(self, bloco: Bloco) -> bytes:
-        return (bloco.conteudo + bloco.iv + str(bloco.timestamp) + bloco.hash_prev + bloco.usuario).encode()
-
-    def obter_conteudo_bloco(self, bloco: Bloco, usuario_sessao: UsuarioSessao) -> str:
+    def obter_conteudo_bloco(self, bloco: Bloco, usuario_sessao: UsuarioSessao) -> tuple[str, bool]:
         conteudo = bloco.conteudo
+        adulterado = False
         if bloco.usuario == usuario_sessao.usuario.usuario:
-            conteudo_bytes = descriptografar_dados(bytes.fromhex(bloco.conteudo), usuario_sessao.chave_sessao, bloco.iv)
-            conteudo = conteudo_bytes.decode('utf-8')
-        return conteudo
+            try:
+                conteudo_bytes = descriptografar_dados(bytes.fromhex(bloco.conteudo), usuario_sessao.chave_sessao, bloco.iv)
+                conteudo = conteudo_bytes.decode('utf-8')
+            except InvalidTag:
+                adulterado = True
+        return conteudo, adulterado
