@@ -1,8 +1,13 @@
-# Tarefa Prática – Mini-Blockchain Simétrica com Autenticação de Usuário
+# Mini-Blockchain Simétrica com Autenticação de Usuário
 
-## Disciplina
+## Como Executar
 
-Segurança da informação e de redes (2026/1)
+Execute o programa da seguinte forma na raiz do projeto:
+
+```bash
+python -m pip install -r requirements.txt
+python src/main.py
+```
 
 ## Alunos
 
