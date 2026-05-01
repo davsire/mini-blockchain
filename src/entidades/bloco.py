@@ -6,13 +6,11 @@ class Bloco:
         self,
         id_bloco: str,
         conteudo: str,
-        iv: str,
         hash_prev: str,
         usuario: str
     ):
         self.__id_bloco = id_bloco
         self.__conteudo = conteudo
-        self.__iv = iv
         self.__timestamp = time.time()
         self.__hash_prev = hash_prev
         self.__usuario = usuario
@@ -28,10 +26,6 @@ class Bloco:
     @conteudo.setter
     def conteudo(self, conteudo: str) -> None:
         self.__conteudo = conteudo
-
-    @property
-    def iv(self) -> str:
-        return self.__iv
 
     @property
     def timestamp(self) -> float:
@@ -50,4 +44,4 @@ class Bloco:
         return self.__usuario
 
     def serializar_bloco(self) -> bytes:
-        return (self.id_bloco + self.conteudo + self.iv + str(self.timestamp) + self.hash_prev + self.usuario).encode()
+        return (self.id_bloco + self.conteudo + str(self.timestamp) + self.hash_prev + self.usuario).encode()

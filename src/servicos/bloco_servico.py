@@ -15,14 +15,13 @@ class BlocoServico:
 
     def criar_bloco(self, conteudo: str, usuario_sessao: UsuarioSessao) -> None:
         id_bloco = os.urandom(8).hex()
-        iv_bloco = derivar_subchave(usuario_sessao.chave_mestra, f'iv_bloco_{id_bloco}', 12)
+        iv_bloco = self.obter_iv_bloco(usuario_sessao, id_bloco)
         ultimo_bloco = self.obter_ultimo_bloco()
         hash_ultimo_bloco = hash_dados(ultimo_bloco.serializar_bloco()) if ultimo_bloco else self.hash_vazio
         dados_criptografados = criptografar_dados(conteudo.encode(), usuario_sessao.chave_sessao, iv_bloco)
         bloco = Bloco(
             id_bloco,
             dados_criptografados,
-            iv_bloco,
             hash_ultimo_bloco,
             usuario_sessao.usuario.usuario
         )
@@ -69,8 +68,12 @@ class BlocoServico:
         adulterado = False
         if bloco.usuario == usuario_sessao.usuario.usuario:
             try:
-                conteudo_bytes = descriptografar_dados(bytes.fromhex(bloco.conteudo), usuario_sessao.chave_sessao, bloco.iv)
+                iv_bloco = self.obter_iv_bloco(usuario_sessao, bloco.id_bloco)
+                conteudo_bytes = descriptografar_dados(bytes.fromhex(bloco.conteudo), usuario_sessao.chave_sessao, iv_bloco)
                 conteudo = conteudo_bytes.decode('utf-8')
             except:
                 adulterado = True
         return conteudo, adulterado
+
+    def obter_iv_bloco(self, usuario_sessao: UsuarioSessao, id_bloco: str) -> str:
+        return derivar_subchave(usuario_sessao.chave_mestra, f'iv_bloco_{id_bloco}', 12)
