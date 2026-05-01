@@ -26,21 +26,24 @@ class AppControlador(ControladorBase):
         self.aviso = Aviso()
 
     def executar(self) -> None:
-        while True:
-            self.usuario_sessao = self.login_cadastro_controlador.executar()
-            while self.usuario_sessao:
-                try:
-                    opcao = self.menu_app.mostrar_tela()
-                    if opcao == 1:
-                        self.executar_fluxo_adicionar_bloco()
-                    elif opcao == 2:
-                        self.executar_fluxo_lista_bloco()
-                    elif opcao == 3:
-                        self.executar_fluxo_adulterar_bloco()
-                    elif opcao == 4:
-                        self.logout()
-                except Exception as erro:
-                    self.aviso.mostrar_tela(str(erro))
+        try:
+            while True:
+                self.usuario_sessao = self.login_cadastro_controlador.executar()
+                while self.usuario_sessao:
+                    try:
+                        opcao = self.menu_app.mostrar_tela()
+                        if opcao == 1:
+                            self.executar_fluxo_adicionar_bloco()
+                        elif opcao == 2:
+                            self.executar_fluxo_lista_bloco()
+                        elif opcao == 3:
+                            self.executar_fluxo_adulterar_bloco()
+                        elif opcao == 4:
+                            self.logout()
+                    except Exception as erro:
+                        self.aviso.mostrar_tela(str(erro))
+        except KeyboardInterrupt:
+            print('\n\nPrograma interrompido pelo usuário.')
 
     def executar_fluxo_adicionar_bloco(self) -> None:
         totp = self.form_totp.mostrar_tela()

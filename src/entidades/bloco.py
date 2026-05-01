@@ -50,4 +50,4 @@ class Bloco:
         return self.__usuario
 
     def serializar_bloco(self) -> bytes:
-        return (self.conteudo + self.iv + str(self.timestamp) + self.hash_prev + self.usuario).encode()
+        return (self.id_bloco + self.conteudo + self.iv + str(self.timestamp) + self.hash_prev + self.usuario).encode()
