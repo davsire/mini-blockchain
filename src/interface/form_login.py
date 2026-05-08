@@ -5,13 +5,12 @@ class FormLogin(InterfaceBase):
     def __init__(self):
         super().__init__('LOGIN')
 
-    def mostrar_tela(self) -> tuple[str, str, str]:
+    def mostrar_tela(self) -> tuple[str, str]:
         super().mostrar_tela()
 
         while True:
             usuario = input('Informe seu usuário: ')
             senha = input('Informe sua senha: ')
-            totp = input('Informe o código TOTP: ')
-            if usuario and senha and totp:
-                return usuario, senha, totp
+            if usuario and senha:
+                return usuario, senha
             print('\nPreencha todos os campos!')

@@ -3,7 +3,7 @@ from interface.interface_base import InterfaceBase
 
 class FormTotp(InterfaceBase):
     def __init__(self):
-        super().__init__('ADICIONAR BLOCO')
+        super().__init__('TOTP')
 
     def mostrar_tela(self) -> str:
         super().mostrar_tela()
