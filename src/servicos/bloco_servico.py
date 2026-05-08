@@ -14,6 +14,9 @@ class BlocoServico:
         self.hash_vazio = '0' * 64
 
     def criar_bloco(self, conteudo: str, usuario_sessao: UsuarioSessao) -> None:
+        cadeia_valida = self.validar_cadeia()
+        if not cadeia_valida:
+            raise Exception('Não foi possível adicionar. Cadeia de blocos inválida.')
         id_bloco = os.urandom(8).hex()
         iv_bloco = self.obter_iv_bloco(usuario_sessao, id_bloco)
         ultimo_bloco = self.obter_ultimo_bloco()
@@ -57,6 +60,7 @@ class BlocoServico:
             bloco.hash_prev = novo_valor
         else:
             raise Exception('Campo inválido.')
+        bloco.timestamp = time.time()
         self.bloco_dao.salvar_bloco(bloco)
 
     def obter_ultimo_bloco(self) -> Bloco | None:
@@ -77,3 +81,12 @@ class BlocoServico:
 
     def obter_iv_bloco(self, usuario_sessao: UsuarioSessao, id_bloco: str) -> str:
         return derivar_subchave(usuario_sessao.chave_mestra, f'iv_bloco_{id_bloco}', 12)
+
+    def validar_cadeia(self) -> bool:
+        blocos = self.bloco_dao.obter_blocos()
+        hash_bloco_anterior = self.hash_vazio
+        for bloco in blocos:
+            if hash_bloco_anterior != bloco.hash_prev:
+                return False
+            hash_bloco_anterior = hash_dados(bloco.serializar_bloco())
+        return True

@@ -31,6 +31,10 @@ class Bloco:
     def timestamp(self) -> float:
         return self.__timestamp
 
+    @timestamp.setter
+    def timestamp(self, timestamp: float) -> None:
+        self.__timestamp = timestamp
+
     @property
     def hash_prev(self) -> str:
         return self.__hash_prev
