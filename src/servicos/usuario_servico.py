@@ -17,7 +17,7 @@ class UsuarioServico:
             raise Exception('Usuário já existe.')
 
         salt = os.urandom(16).hex()
-        usuario_salvar = Usuario(usuario, hash_dados(senha.encode()), salt)
+        usuario_salvar = Usuario(usuario, hash_dados(senha.encode() + bytes.fromhex(salt)), salt)
         self.usuario_dao.salvar_usuario(usuario_salvar)
 
         chave_mestra = derivar_chave_mestra(senha, salt, 32)
@@ -31,7 +31,7 @@ class UsuarioServico:
         if usuario_base is None:
             raise Exception('Usuário não encontrado.')
 
-        senha_valida = hash_dados(senha.encode()) == usuario_base.senha
+        senha_valida = hash_dados(senha.encode() + bytes.fromhex(usuario_base.salt)) == usuario_base.senha
         if not senha_valida:
             raise Exception('Senha inválida.')
 
