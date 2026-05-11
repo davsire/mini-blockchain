@@ -3,7 +3,7 @@ from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 
-def derivar_chave_mestra(senha: str, salt: str, tamanho: int) -> str:
+def derivar_senha(senha: str, salt: str, tamanho: int) -> str:
     kdf = PBKDF2HMAC(
         algorithm=hashes.SHA512(),
         length=tamanho,
